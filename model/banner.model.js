@@ -18,7 +18,7 @@ const bannerSchema = new Schema(
       required: [true, "image is required"],
     },
 
-    status: {
+    isActive: {
       type: Boolean,
       default: true,
     },

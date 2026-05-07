@@ -8,6 +8,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cookieParser());
 
+// static files middleware to serve static files from the 'public' directory
+app.use("/uploads", express.static("uploads"));
 // database connection
 dbConfig();
 
