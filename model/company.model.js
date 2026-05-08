@@ -10,6 +10,10 @@ const companySchema = new Schema(
       type: String,
       required: [true, "image is required"],
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: false },
 );
