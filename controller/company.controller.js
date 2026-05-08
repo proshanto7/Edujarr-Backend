@@ -15,3 +15,11 @@ exports.addCompanyController = asyncHandler(async (req, res) => {
   await company.save();
   apiResponse(res, 200, "company added successfully", company);
 });
+
+exports.allCompanyController = asyncHandler(async (req, res) => {
+  const company = await companyModel
+    .find({})
+    .select("name image isActive")
+    .sort({ createdAt: -1 });
+  apiResponse(res, 200, "company fetched successfully", company);
+});
