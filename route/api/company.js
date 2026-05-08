@@ -1,7 +1,11 @@
 const express = require("express");
 const { authorize } = require("../../middleware/authorize");
 const { authorizeRole } = require("../../middleware/authorizeRole");
-const { addCompanyController, allCompanyController } = require("../../controller/company.controller");
+const {
+  addCompanyController,
+  allCompanyController,
+  deleteCompanyController,
+} = require("../../controller/company.controller");
 const uploadFile = require("../../helpers/uploadsFile");
 const router = express.Router();
 
@@ -16,6 +20,11 @@ router.post(
 );
 
 router.get("/all-company", allCompanyController);
-
+router.delete(
+  "/delete-company/:id",
+  authorize,
+  authorizeRole("admin"),
+  deleteCompanyController,
+);
 
 module.exports = router;

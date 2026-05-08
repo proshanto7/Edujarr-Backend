@@ -1,3 +1,4 @@
+const { deleteFile } = require("../helpers/deleteHelper");
 const companyModel = require("../model/company.model");
 const { apiResponse } = require("../utils/apiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
@@ -22,4 +23,15 @@ exports.allCompanyController = asyncHandler(async (req, res) => {
     .select("name image isActive")
     .sort({ createdAt: -1 });
   apiResponse(res, 200, "company fetched successfully", company);
+});
+
+exports.deleteCompanyController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const company = await companyModel.findById(id);
+  if (!company) {
+    return apiResponse(res, 404, "company not found");
+  }
+  await deleteFile(company.image);
+  await company.deleteOne();
+  apiResponse(res, 200, "company deleted successfully" , company);
 });
