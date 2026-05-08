@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   addCategoryController,
+  findAllCategoryController,
 } = require("../../controller/category.controller");
 const { authorize } = require("../../middleware/authorize");
 const { authorizeRole } = require("../../middleware/authorizeRole");
@@ -16,5 +17,6 @@ router.post(
   upload.single("category-image"),
   addCategoryController,
 );
+router.get("/all-category", findAllCategoryController);
 
 module.exports = router;

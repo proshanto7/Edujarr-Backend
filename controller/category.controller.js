@@ -24,3 +24,11 @@ exports.addCategoryController = asyncHandler(async (req, res) => {
   await category.save();
   apiResponse(res, 200, "category added successfully", category);
 });
+
+exports.findAllCategoryController = asyncHandler(async (req, res) => {
+  const category = await categoryModel
+    .find({})
+    .select("name image isActive")
+    .sort({ createdAt: -1 });
+  apiResponse(res, 200, "category fetched successfully", category);
+});
