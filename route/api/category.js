@@ -2,6 +2,8 @@ const express = require("express");
 const {
   addCategoryController,
   findAllCategoryController,
+  updateCategoryController,
+  deleteCategoryController,
 } = require("../../controller/category.controller");
 const { authorize } = require("../../middleware/authorize");
 const { authorizeRole } = require("../../middleware/authorizeRole");
@@ -18,5 +20,20 @@ router.post(
   addCategoryController,
 );
 router.get("/all-category", findAllCategoryController);
+
+router.patch(
+  "/update-category/:id",
+  authorize,
+  authorizeRole("admin"),
+  upload.single("category-image"),
+  updateCategoryController,
+);
+
+router.delete(
+  "/delete-category/:id",
+  authorize,
+  authorizeRole("admin"),
+  deleteCategoryController,
+);
 
 module.exports = router;
