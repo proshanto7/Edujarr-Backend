@@ -5,6 +5,7 @@ const {
   addCompanyController,
   allCompanyController,
   deleteCompanyController,
+  updateCompanyController,
 } = require("../../controller/company.controller");
 const uploadFile = require("../../helpers/uploadsFile");
 const router = express.Router();
@@ -25,6 +26,13 @@ router.delete(
   authorize,
   authorizeRole("admin"),
   deleteCompanyController,
+);
+router.patch(
+  "/update-company/:id",
+  authorize,
+  authorizeRole("admin"),
+  upload.single("company-image"),
+  updateCompanyController,
 );
 
 module.exports = router;

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 // handle file update in uploads folder 
-exports.handleFileUpdate = async (oldImagePath, newFileName) => {
+exports.fileUpdateHelper = async (oldImagePath, newFileName) => {
   const folderPath = path.join(__dirname, "../uploads");
   const oldFile = oldImagePath?.split("/").pop();
 // delete old file if exists

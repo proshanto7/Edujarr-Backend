@@ -1,4 +1,5 @@
 const { deleteFile } = require("../helpers/deleteHelper");
+const { fileUpdateHelper } = require("../helpers/fileUpdateHelper");
 const companyModel = require("../model/company.model");
 const { apiResponse } = require("../utils/apiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
@@ -33,5 +34,23 @@ exports.deleteCompanyController = asyncHandler(async (req, res) => {
   }
   await deleteFile(company.image);
   await company.deleteOne();
-  apiResponse(res, 200, "company deleted successfully" , company);
+  apiResponse(res, 200, "company deleted successfully", company);
+});
+
+exports.updateCompanyController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, isActive } = req.body;
+  const image = req.file?.filename;
+  const company = await companyModel.findById(id);
+  if (!company) {
+    return apiResponse(res, 404, "company not found");
+  }
+  if (image) {
+    // delete old file from uploads folder and update new file in uploads folder 
+    company.image = await fileUpdateHelper(company.image, image);
+  }
+  company.name = name;
+  company.isActive = isActive;
+  await company.save();
+  apiResponse(res, 200, "company updated successfully", company);
 });
