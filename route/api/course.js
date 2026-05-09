@@ -2,7 +2,10 @@ const express = require("express");
 const { authorize } = require("../../middleware/authorize");
 const { authorizeRole } = require("../../middleware/authorizeRole");
 const uploadFile = require("../../helpers/uploadsFile");
-const { addCourseController } = require("../../controller/course.controller");
+const {
+  addCourseController,
+  findAllCourseController,
+} = require("../../controller/course.controller");
 const router = express.Router();
 const upload = uploadFile(["jpg", "jpeg", "png", "webp"], 2);
 
@@ -13,5 +16,6 @@ router.post(
   upload.single("course-image"),
   addCourseController,
 );
+router.get("/all-courses", findAllCourseController);
 
 module.exports = router;

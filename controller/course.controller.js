@@ -34,3 +34,11 @@ exports.addCourseController = asyncHandler(async (req, res) => {
   await course.save();
   apiResponse(res, 200, "course added successfully", course);
 });
+
+exports.findAllCourseController = asyncHandler(async (req, res) => {
+  const course = await courseModel
+    .find({})
+    .select("name image price duration slug isActive")
+    .sort({ createdAt: -1 });
+  apiResponse(res, 200, "course fetched successfully", course);
+});
