@@ -1,12 +1,13 @@
 const { deleteFile } = require("../helpers/deleteHelper");
 const { fileUpdateHelper } = require("../helpers/fileUpdateHelper");
+const categoryModel = require("../model/category.model");
 const courseModel = require("../model/course.model");
 const { apiResponse } = require("../utils/apiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
 const createSlug = require("../utils/createSlug");
 
 exports.addCourseController = asyncHandler(async (req, res) => {
-  const { name, price, duration, isActive, students } = req.body;
+  const { name, price, duration, isActive, students, category } = req.body;
   const image = req.file?.filename;
 
   if (!name) {
@@ -21,6 +22,11 @@ exports.addCourseController = asyncHandler(async (req, res) => {
     deleteFile(image);
     return apiResponse(res, 409, "course already exists");
   }
+  const findCategory = await categoryModel.findById(category);
+  if (!findCategory) {
+    deleteFile(image);
+    return apiResponse(res, 400, "category not found");
+  }
 
   const course = new courseModel({
     name,
@@ -30,7 +36,11 @@ exports.addCourseController = asyncHandler(async (req, res) => {
     slug,
     students,
     isActive,
+    category,
   });
+
+  findCategory.courses.push(course._id);
+  await findCategory.save();
 
   await course.save();
   apiResponse(res, 200, "course added successfully", course);
@@ -51,12 +61,16 @@ exports.deleteCourseController = asyncHandler(async (req, res) => {
   deleteFile(course.image);
   await course.deleteOne();
 
+  const findCategory = await categoryModel.findById(course.category);
+  findCategory.courses.pull(course._id);
+  await findCategory.save();
+
   apiResponse(res, 200, "course deleted successfully", course);
 });
 
 exports.updateCourseController = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, price, duration, isActive, students } = req.body;
+  const { name, price, duration, isActive, students, category } = req.body;
   const image = req.file?.filename;
   const course = await courseModel.findById(id);
   if (!course) return apiResponse(res, 404, "course not found");
@@ -73,6 +87,16 @@ exports.updateCourseController = asyncHandler(async (req, res) => {
   if (duration) course.duration = duration;
   if (isActive !== undefined) course.isActive = isActive;
   if (students) course.students = students;
+  if (category) {
+    const findCategory = await categoryModel.findById(category);
+    if (!findCategory) return apiResponse(res, 400, "category not found");
+    const oldCategory = await categoryModel.findById(course.category);
+    oldCategory.courses.pull(course._id);
+    await oldCategory.save();
+    findCategory.courses.push(course._id);
+    await findCategory.save();
+    course.category = category;
+  }
 
   await course.save();
   apiResponse(res, 200, "course updated successfully", course);

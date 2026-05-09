@@ -18,6 +18,12 @@ const categorySchema = new Schema(
       type: Boolean,
       default: true,
     },
+    courses: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
   },
   {
     timestamps: true,

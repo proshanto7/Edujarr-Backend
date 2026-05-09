@@ -34,6 +34,11 @@ const courseSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    category: {
+      type: Schema.Types.ObjectId,
+      required: [true, "Category is required"],
+      ref: "Category",
+    },
   },
   { timestamps: true, versionKey: false },
 );
