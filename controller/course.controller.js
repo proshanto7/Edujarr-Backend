@@ -1,4 +1,5 @@
 const { deleteFile } = require("../helpers/deleteHelper");
+const { fileUpdateHelper } = require("../helpers/fileUpdateHelper");
 const courseModel = require("../model/course.model");
 const { apiResponse } = require("../utils/apiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
@@ -50,5 +51,29 @@ exports.deleteCourseController = asyncHandler(async (req, res) => {
   deleteFile(course.image);
   await course.deleteOne();
 
-  apiResponse(res, 200, "course deleted successfully" , course);
+  apiResponse(res, 200, "course deleted successfully", course);
+});
+
+exports.updateCourseController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, price, duration, isActive, students } = req.body;
+  const image = req.file?.filename;
+  const course = await courseModel.findById(id);
+  if (!course) return apiResponse(res, 404, "course not found");
+  if (image) {
+    // delete old file from uploads folder and update new file in uploads folder
+    course.image = await fileUpdateHelper(course.image, image);
+  }
+  if (name) {
+    const slug = createSlug(name);
+    course.slug = slug;
+    course.name = name;
+  }
+  if (price) course.price = price;
+  if (duration) course.duration = duration;
+  if (isActive !== undefined) course.isActive = isActive;
+  if (students) course.students = students;
+
+  await course.save();
+  apiResponse(res, 200, "course updated successfully", course);
 });
