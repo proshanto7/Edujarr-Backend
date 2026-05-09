@@ -42,3 +42,13 @@ exports.findAllCourseController = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 });
   apiResponse(res, 200, "course fetched successfully", course);
 });
+
+exports.deleteCourseController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const course = await courseModel.findById(id);
+  if (!course) return apiResponse(res, 404, "course not found");
+  deleteFile(course.image);
+  await course.deleteOne();
+
+  apiResponse(res, 200, "course deleted successfully" , course);
+});
