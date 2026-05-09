@@ -62,16 +62,5 @@ const userSchema = new Schema(
     versionKey: false, // Exclude __v field
   },
 );
-//  Exclude password from query results
-userSchema.set("toJSON", {
-  transform: function (doc, ret) {
-    delete ret.otp; // Exclude otp from query results
-    delete ret.password; // Exclude password from query results
-    delete ret.otpExpiry; // Exclude otpExpiry from query results
-    delete ret.forgotPasswordOtp; // Exclude forgotPasswordOtp from query results
-    delete ret.forgotPasswordOtpExpiry; // Exclude forgotPasswordOtpExpiry from query results
-    return ret;
-  },
-});
 
 module.exports = mongoose.model("User", userSchema);
