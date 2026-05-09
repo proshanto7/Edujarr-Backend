@@ -50,6 +50,7 @@ exports.findAllCourseController = asyncHandler(async (req, res) => {
   const course = await courseModel
     .find({})
     .select("name image price duration slug isActive")
+    .populate("category", "name -_id")
     .sort({ createdAt: -1 });
   apiResponse(res, 200, "course fetched successfully", course);
 });
@@ -91,8 +92,10 @@ exports.updateCourseController = asyncHandler(async (req, res) => {
     const findCategory = await categoryModel.findById(category);
     if (!findCategory) return apiResponse(res, 400, "category not found");
     const oldCategory = await categoryModel.findById(course.category);
-    oldCategory.courses.pull(course._id);
-    await oldCategory.save();
+    if (oldCategory) {
+      oldCategory.courses.pull(course._id);
+      await oldCategory.save();
+    }
     findCategory.courses.push(course._id);
     await findCategory.save();
     course.category = category;
