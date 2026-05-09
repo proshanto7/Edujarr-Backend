@@ -24,6 +24,12 @@ const courseSchema = new Schema(
       type: Number,
       default: 0,
     },
+    slug: {
+      type: String,
+      required: [true, "Slug is required"],
+      unique: [true, "Slug already exists"],
+      trim: true,
+    },
     isActive: {
       type: Boolean,
       default: true,
