@@ -10,12 +10,8 @@ const cartSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Course",
     },
-    quantity: {
-      type: Number,
-      default: 1,
-    },
   },
-  { timestamps: true, versionKey: false }
-)
+  { timestamps: true, versionKey: false },
+);
 
 module.exports = mongoose.model("Cart", cartSchema);
