@@ -25,3 +25,12 @@ exports.getCartController = asyncHandler(async (req, res) => {
     .select("courseId quantity");
   apiResponse(res, 200, "cart fetched successfully", cart);
 });
+
+exports.deleteCartController = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const cart = await cartModel.findById(id);
+  if (!cart) return apiResponse(res, 404, "cart not found");
+  await cart.deleteOne();
+  apiResponse(res, 200, "cart deleted successfully", cart);
+  
+});
